@@ -1,9 +1,9 @@
 package cc.carm.lib.easysql.api.function;
 
-import cc.carm.lib.easysql.api.SQLAction;
 import cc.carm.lib.easysql.api.SQLQuery;
-import cc.carm.lib.easysql.api.action.PreparedSQLUpdateAction;
-import cc.carm.lib.easysql.api.action.PreparedSQLUpdateBatchAction;
+import cc.carm.lib.easysql.api.action.SQLAction;
+import cc.carm.lib.easysql.api.action.base.PreparedBatchUpdateAction;
+import cc.carm.lib.easysql.api.action.base.PreparedUpdateAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ public interface SQLDebugHandler {
      *
      * @param action {@link SQLAction} 对象
      * @param params 执行传入的参数列表。
-     *               实际上，仅有 {@link PreparedSQLUpdateAction} 和 {@link PreparedSQLUpdateBatchAction} 才会有传入参数。
+     *               实际上，仅有 {@link PreparedUpdateAction} 和 {@link PreparedBatchUpdateAction} 才会有传入参数。
      */
     void beforeExecute(@NotNull SQLAction<?> action, @NotNull List<@Nullable Object[]> params);
 
@@ -56,12 +56,12 @@ public interface SQLDebugHandler {
             @Override
             public void beforeExecute(@NotNull SQLAction<?> action, @NotNull List<@Nullable Object[]> params) {
                 logger.info("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-                logger.info("┣# ActionUUID: {}", action.getActionUUID());
-                logger.info("┣# ActionType: {}", action.getClass().getSimpleName());
+                logger.info("┣# 操作编号: {}", action.getActionUUID());
+                logger.info("┣# 操作类型: {}", action.getClass().getSimpleName());
                 if (action.getSQLContents().size() == 1) {
-                    logger.info("┣# SQLContent: {}", action.getSQLContents().get(0));
+                    logger.info("┣# SQL语句: {}", action.getSQLContents().get(0));
                 } else {
-                    logger.info("┣# SQLContents: ");
+                    logger.info("┣# SQL语句: ");
                     int i = 0;
                     for (String sqlContent : action.getSQLContents()) {
                         logger.info("┃ - [{}] {}", ++i, sqlContent);
@@ -70,25 +70,25 @@ public interface SQLDebugHandler {
                 if (params.size() == 1) {
                     Object[] param = params.get(0);
                     if (param != null) {
-                        logger.info("┣# SQLParam: {}", parseParams(param));
+                        logger.info("┣# SQL参数: {}", parseParams(param));
                     }
                 } else if (params.size() > 1) {
-                    logger.info("┣# SQLParams: ");
+                    logger.info("┣# SQL参数: ");
                     int i = 0;
                     for (Object[] param : params) {
                         logger.info("┃ - [{}] {}", ++i, parseParams(param));
                     }
                 }
-                logger.info("┣# CreateTime: {}", action.getCreateTime(TimeUnit.MILLISECONDS));
+                logger.info("┣# 创建时间: {}", action.getCreateTime(TimeUnit.MILLISECONDS));
                 logger.info("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
             }
 
             @Override
             public void afterQuery(@NotNull SQLQuery query, long executeNanoTime, long closeNanoTime) {
                 logger.info("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-                logger.info("┣# ActionUUID: {}", query.getAction().getActionUUID());
-                logger.info("┣# SQLContent: {}", query.getSQLContent());
-                logger.info("┣# CloseTime: {}  (cost {} ms)",
+                logger.info("┣# 操作编号: {}", query.getAction().getActionUUID());
+                logger.info("┣# SQL语句: {}", query.getSQLContent());
+                logger.info("┣# 关闭时间: {}  (cost {} ms)",
                         TimeUnit.NANOSECONDS.toMillis(closeNanoTime),
                         ((double) (closeNanoTime - executeNanoTime) / 1000000)
                 );

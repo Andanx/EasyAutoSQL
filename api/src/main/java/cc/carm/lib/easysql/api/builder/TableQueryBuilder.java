@@ -1,6 +1,6 @@
 package cc.carm.lib.easysql.api.builder;
 
-import cc.carm.lib.easysql.api.action.query.PreparedQueryAction;
+import cc.carm.lib.easysql.api.action.base.PreparedQueryAction;
 import org.jetbrains.annotations.NotNull;
 
 public interface TableQueryBuilder extends ConditionalBuilder<TableQueryBuilder, PreparedQueryAction> {
@@ -13,7 +13,7 @@ public interface TableQueryBuilder extends ConditionalBuilder<TableQueryBuilder,
      * @param columnNames 列名
      * @return {@link TableQueryBuilder}
      */
-    TableQueryBuilder selectColumns(@NotNull String... columnNames);
+    TableQueryBuilder select(@NotNull String... columnNames);
 
     /**
      * 对结果进行排序
@@ -32,6 +32,6 @@ public interface TableQueryBuilder extends ConditionalBuilder<TableQueryBuilder,
      * @return {@link TableQueryBuilder}
      * @since 0.2.6
      */
-    TableQueryBuilder setPageLimit(int start, int end);
+    TableQueryBuilder limit(int start, int end);
 
 }

@@ -1,7 +1,6 @@
 package cc.carm.lib.easysql.tests;
 
 import cc.carm.lib.easysql.TestHandler;
-import cc.carm.lib.easysql.api.SQLManager;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -26,8 +25,8 @@ public class SQLUpdateBatchTests extends TestHandler {
     public void onTest(SQLManager sqlManager) throws SQLException {
 
         List<Long> updates = sqlManager.createInsertBatch("test_user_table")
-                .setColumnNames("uuid", "username", "age")
-                .setAllParams(generateParams())
+                .columns("uuid", "username", "age")
+                .allValues(generateParams())
                 .returnGeneratedKeys(Long.class)
                 .execute();
 

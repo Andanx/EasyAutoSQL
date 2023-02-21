@@ -1,18 +1,16 @@
 package cc.carm.lib.easysql.api.builder;
 
-import cc.carm.lib.easysql.api.SQLAction;
-
 import java.util.Arrays;
 import java.util.List;
 
-public interface InsertBuilder<T extends SQLAction<?>> {
+public interface InsertBuilder<T> {
 
     String getTableName();
 
-    T setColumnNames(List<String> columnNames);
+    T columns(List<String> columnNames);
 
-    default T setColumnNames(String... columnNames) {
-        return setColumnNames(columnNames == null ? null : Arrays.asList(columnNames));
+    default T columns(String... columnNames) {
+        return columns(columnNames == null ? null : Arrays.asList(columnNames));
     }
 
 

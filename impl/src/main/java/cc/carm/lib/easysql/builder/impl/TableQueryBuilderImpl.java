@@ -1,7 +1,7 @@
 package cc.carm.lib.easysql.builder.impl;
 
 import cc.carm.lib.easysql.action.query.PreparedQueryActionImpl;
-import cc.carm.lib.easysql.api.action.query.PreparedQueryAction;
+import cc.carm.lib.easysql.api.action.base.PreparedQueryAction;
 import cc.carm.lib.easysql.api.builder.TableQueryBuilder;
 import cc.carm.lib.easysql.manager.SQLManagerImpl;
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +68,7 @@ public class TableQueryBuilderImpl
     }
 
     @Override
-    public TableQueryBuilderImpl selectColumns(@NotNull String... columnNames) {
+    public TableQueryBuilderImpl select(@NotNull String... columnNames) {
         Objects.requireNonNull(columnNames, "columnNames could not be null");
         this.columns = columnNames;
         return this;
@@ -82,7 +82,7 @@ public class TableQueryBuilderImpl
     }
 
     @Override
-    public TableQueryBuilder setPageLimit(int start, int end) {
+    public TableQueryBuilder limit(int start, int end) {
         this.pageLimit = new int[]{start, end};
         return this;
     }

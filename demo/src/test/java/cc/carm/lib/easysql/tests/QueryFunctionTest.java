@@ -1,7 +1,6 @@
 package cc.carm.lib.easysql.tests;
 
 import cc.carm.lib.easysql.TestHandler;
-import cc.carm.lib.easysql.api.SQLManager;
 
 import java.sql.SQLException;
 
@@ -12,9 +11,9 @@ public class QueryFunctionTest extends TestHandler {
     public void onTest(SQLManager sqlManager) throws SQLException {
 
         Integer id_1 = sqlManager.createQuery()
-                .inTable("test_user_table")
+                .fromTable("test_user_table")
                 .orderBy("id", false)
-                .setLimit(1)
+                .limit(1)
                 .build().executeFunction(query -> {
                     try {
                         Thread.sleep(1000L);

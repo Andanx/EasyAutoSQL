@@ -1,8 +1,8 @@
-package cc.carm.lib.easysql.api;
+package cc.carm.lib.easysql.api.action;
 
+import cc.carm.lib.easysql.api.SQLSource;
 import cc.carm.lib.easysql.api.function.SQLExceptionHandler;
 import cc.carm.lib.easysql.api.function.SQLFunction;
-import cc.carm.lib.easysql.api.function.SQLHandler;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,29 +12,8 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-/**
- * SQLAction 是用于承载SQL语句并进行处理、返回的基本类。
- *
- * <ul>
- *     <li>同步执行 {@link #execute()}, {@link #execute(SQLFunction, SQLExceptionHandler)}
- *     <br>同步执行方法中有会抛出异常的方法与不抛出异常的方法，
- *     <br>若选择不抛出异常，则返回值可能为空，需要特殊处理。</li>
- *
- *     <li>异步执行 {@link #executeAsync(SQLHandler, SQLExceptionHandler)}
- *     <br>异步执行时将提供成功与异常两种处理方式
- *     <br>可自行选择是否对数据或异常进行处理
- *     <br>默认的异常处理器为 {@link #defaultExceptionHandler()}
- *     <br>若有特殊需要，可通过{@link #setExceptionHandler(SQLExceptionHandler)} 方法修改默认的处理器</li>
- * </ul>
- *
- * @param <T> 需要返回的类型
- * @author CarmJos
- * @since 0.0.1
- */
 public interface SQLAction<T> {
 
     /**
@@ -87,11 +66,11 @@ public interface SQLAction<T> {
     }
 
     /**
-     * 得到承载该Action的对应{@link SQLManager}
+     * 得到承载该Action的对应{@link SQLSource}
      *
-     * @return {@link SQLManager}
+     * @return {@link SQLSource}
      */
-    @NotNull SQLManager getManager();
+    @NotNull SQLSource getSource();
 
     /**
      * 执行该Action对应的SQL语句
@@ -100,7 +79,6 @@ public interface SQLAction<T> {
      * @throws SQLException 当SQL操作出现问题时抛出
      */
     @NotNull T execute() throws SQLException;
-
 
     /**
      * 执行语句并返回值
@@ -183,47 +161,6 @@ public interface SQLAction<T> {
         }
     }
 
-    /**
-     * 异步执行SQL语句，采用默认异常处理，无需返回值。
-     */
-    default void executeAsync() {
-        executeAsync(null);
-    }
-
-    /**
-     * 异步执行SQL语句
-     *
-     * @param success 成功时的操作
-     */
-    default void executeAsync(@Nullable SQLHandler<T> success) {
-        executeAsync(success, null);
-    }
-
-    /**
-     * 异步执行SQL语句
-     *
-     * @param success 成功时的操作
-     * @param failure 异常处理器 默认为 {@link SQLAction#defaultExceptionHandler()}
-     */
-    void executeAsync(@Nullable SQLHandler<T> success,
-                      @Nullable SQLExceptionHandler failure);
-
-    /**
-     * 以异步Future方式执行SQL语句。
-     *
-     * @return 异步执行的Future实例，可通过 {@link Future#get()} 阻塞并等待结果。
-     */
-    default @NotNull CompletableFuture<Void> executeFuture() {
-        return executeFuture((t -> null));
-    }
-
-    /**
-     * 以异步Future方式执行SQL语句。
-     *
-     * @return 异步执行的Future实例，可通过 {@link Future#get()} 阻塞并等待结果。
-     */
-    <R> @NotNull CompletableFuture<R> executeFuture(@NotNull SQLFunction<T, R> handler);
-
     default void handleException(@Nullable SQLExceptionHandler handler, SQLException exception) {
         if (handler == null) handler = defaultExceptionHandler();
         handler.accept(exception, this);
@@ -237,7 +174,7 @@ public interface SQLAction<T> {
      * @return {@link SQLExceptionHandler}
      */
     default SQLExceptionHandler defaultExceptionHandler() {
-        return getManager().getExceptionHandler();
+        return getSource().getExceptionHandler();
     }
 
     /**
@@ -248,7 +185,7 @@ public interface SQLAction<T> {
      * @param handler 异常处理器
      */
     default void setExceptionHandler(@Nullable SQLExceptionHandler handler) {
-        getManager().setExceptionHandler(handler);
+        getSource().setExceptionHandler(handler);
     }
 
 }

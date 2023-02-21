@@ -1,8 +1,8 @@
 package cc.carm.lib.easysql.api.builder;
 
 import cc.carm.lib.easysql.api.SQLBuilder;
-import cc.carm.lib.easysql.api.action.query.PreparedQueryAction;
-import cc.carm.lib.easysql.api.action.query.QueryAction;
+import cc.carm.lib.easysql.api.action.base.QueryAction;
+import cc.carm.lib.easysql.api.action.base.PreparedQueryAction;
 import org.jetbrains.annotations.NotNull;
 
 public interface QueryBuilder extends SQLBuilder {
@@ -32,6 +32,6 @@ public interface QueryBuilder extends SQLBuilder {
      * @param tableName 表名
      * @return {@link TableQueryBuilder}
      */
-    TableQueryBuilder inTable(@NotNull String tableName);
+    TableQueryBuilder fromTable(@NotNull String tableName);
 
 }

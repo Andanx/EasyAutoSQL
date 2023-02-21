@@ -1,6 +1,6 @@
 package cc.carm.lib.easysql.api.function;
 
-import cc.carm.lib.easysql.api.SQLAction;
+import cc.carm.lib.easysql.api.action.SQLAction;
 import org.slf4j.Logger;
 
 import java.sql.SQLException;
@@ -38,6 +38,7 @@ public interface SQLExceptionHandler extends BiConsumer<SQLException, SQLAction<
      *
      * @return 无输出的处理器。
      */
+    @Deprecated
     static SQLExceptionHandler silent() {
         return (exception, sqlAction) -> {
         };

@@ -1,8 +1,7 @@
 package cc.carm.lib.easysql.builder.impl;
 
-import cc.carm.lib.easysql.action.PreparedSQLUpdateActionImpl;
-import cc.carm.lib.easysql.api.SQLAction;
-import cc.carm.lib.easysql.api.action.PreparedSQLUpdateAction;
+import cc.carm.lib.easysql.action.PreparedUpdateActionImpl;
+import cc.carm.lib.easysql.api.action.base.PreparedUpdateAction;
 import cc.carm.lib.easysql.api.builder.UpdateBuilder;
 import cc.carm.lib.easysql.manager.SQLManagerImpl;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +26,7 @@ public class UpdateBuilderImpl
     }
 
     @Override
-    public PreparedSQLUpdateAction<Integer> build() {
+    public PreparedUpdateAction<Integer> build() {
 
         StringBuilder sqlBuilder = new StringBuilder();
 
@@ -47,7 +46,7 @@ public class UpdateBuilderImpl
 
         if (limit > 0) sqlBuilder.append(" ").append(buildLimitSQL());
 
-        return new PreparedSQLUpdateActionImpl<>(getManager(), Integer.class, sqlBuilder.toString(), allParams);
+        return new PreparedUpdateActionImpl<>(getManager(), Integer.class, sqlBuilder.toString(), allParams);
     }
 
     @Override
@@ -56,20 +55,20 @@ public class UpdateBuilderImpl
     }
 
     @Override
-    public UpdateBuilder addColumnValue(@NotNull String columnName, Object columnValue) {
+    public UpdateBuilder set(@NotNull String columnName, Object columnValue) {
         Objects.requireNonNull(columnName, "columnName could not be null");
         this.columnData.put(columnName, columnValue);
         return this;
     }
 
     @Override
-    public UpdateBuilder setColumnValues(LinkedHashMap<String, Object> columnData) {
+    public UpdateBuilder setAll(LinkedHashMap<String, Object> columnData) {
         this.columnData = columnData;
         return this;
     }
 
     @Override
-    public UpdateBuilder setColumnValues(@NotNull String[] columnNames, @Nullable Object[] columnValues) {
+    public UpdateBuilder setAll(@NotNull String[] columnNames, @Nullable Object[] columnValues) {
         Objects.requireNonNull(columnNames, "columnName could not be null");
         if (columnNames.length != columnValues.length) {
             throw new RuntimeException("columnNames are not match with columnValues");
@@ -78,7 +77,7 @@ public class UpdateBuilderImpl
         for (int i = 0; i < columnNames.length; i++) {
             columnData.put(columnNames[i], columnValues[i]);
         }
-        return setColumnValues(columnData);
+        return setAll(columnData);
     }
 
 
